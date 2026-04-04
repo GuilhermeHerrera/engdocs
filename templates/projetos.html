@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Projetos — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="ph-row">
+    <div><h1>Projetos</h1><p>{{ projetos|length }} projeto(s) encontrado(s)</p></div>
+    {% if session.tipo in ['admin','engenheiro'] %}
+    <a href="{{ url_for('novo_projeto') }}" class="btn btn-primary">+ Novo projeto</a>
+    {% endif %}
+  </div>
+</div>
+
+<form method="GET" class="search-bar">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nome…">
+  <select name="status" onchange="this.form.submit()">
+    <option value="">Todos os status</option>
+    <option value="ativo" {{ 'selected' if status=='ativo' }}>Ativo</option>
+    <option value="pausado" {{ 'selected' if status=='pausado' }}>Pausado</option>
+    <option value="concluido" {{ 'selected' if status=='concluido' }}>Concluído</option>
+    <option value="cancelado" {{ 'selected' if status=='cancelado' }}>Cancelado</option>
+  </select>
+  <button type="submit" class="btn btn-ghost">Buscar</button>
+  {% if q or status %}<a href="{{ url_for('listar_projetos') }}" class="btn btn-ghost">Limpar</a>{% endif %}
+</form>
+
+{% if projetos %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Nome</th><th>Status</th><th>Docs</th><th>Criado por</th><th>Atualizado</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for p in projetos %}
+    <tr>
+      <td><a href="{{ url_for('ver_projeto', projeto_id=p.id) }}" style="color:var(--text);text-decoration:none;font-weight:500">{{ p.nome }}</a>
+        {% if p.descricao %}<div style="font-size:12px;color:var(--text-dim)">{{ p.descricao[:60] }}{% if p.descricao|length>60 %}…{% endif %}</div>{% endif %}
+      </td>
+      <td><span class="badge badge-{{ p.status }}">{{ p.status }}</span></td>
+      <td class="td-mono text-dim">{{ p.total_docs }}</td>
+      <td class="text-dim">{{ p.criado_por_nome }}</td>
+      <td class="text-dim" style="font-size:12px">{{ p.atualizado_em.strftime('%d/%m/%Y') }}</td>
+      <td>
+        <div class="actions">
+          <a href="{{ url_for('ver_projeto', projeto_id=p.id) }}" class="btn btn-ghost btn-sm">Ver</a>
+          {% if session.tipo in ['admin','engenheiro'] %}
+          <a href="{{ url_for('editar_projeto', pid=p.id) }}" class="btn btn-ghost btn-sm">Editar</a>
+          {% endif %}
+          {% if session.tipo == 'admin' %}
+          <form method="POST" action="{{ url_for('excluir_projeto', pid=p.id) }}"
+                onsubmit="return confirm('Excluir este projeto e todos os documentos?')">
+            <button class="btn btn-danger btn-sm">Excluir</button>
+          </form>
+          {% endif %}
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="ei">📁</div>
+  <p>Nenhum projeto encontrado.</p>
+  {% if session.tipo in ['admin','engenheiro'] %}
+  <a href="{{ url_for('novo_projeto') }}" class="btn btn-primary" style="margin-top:.75rem">Criar primeiro projeto</a>
+  {% endif %}
+</div></div>
+{% endif %}
+{% endblock %}

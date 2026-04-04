@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Usuários — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="ph-row">
+    <div><h1>Gerenciar usuários</h1><p>{{ usuarios|length }} usuário(s) cadastrado(s)</p></div>
+    <a href="{{ url_for('cadastro') }}" class="btn btn-primary">+ Novo usuário</a>
+  </div>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Nome</th><th>E-mail</th><th>Tipo</th><th>Status</th><th>Desde</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for u in usuarios %}
+    <tr>
+      <td style="font-weight:500">{{ u.nome }}</td>
+      <td class="text-dim" style="font-size:12px">{{ u.email }}</td>
+      <td><span class="chip chip-{{ u.tipo }}">{{ u.tipo }}</span></td>
+      <td>
+        {% if u.ativo %}<span class="badge badge-aprovado">Ativo</span>
+        {% else %}<span class="badge badge-reprovado">Inativo</span>{% endif %}
+      </td>
+      <td class="text-dim" style="font-size:12px">{{ u.criado_em.strftime('%d/%m/%Y') }}</td>
+      <td>
+        <div class="actions">
+          {% if u.id != session.usuario_id %}
+          <form method="POST" action="{{ url_for('alterar_tipo', uid=u.id) }}" style="display:flex;gap:.4rem;align-items:center">
+            <select name="tipo" style="width:auto;padding:.25rem .5rem;font-size:12px">
+              {% for t in ['admin','engenheiro','visualizador'] %}
+              <option value="{{ t }}" {{ 'selected' if u.tipo==t }}>{{ t.capitalize() }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-ghost btn-xs">OK</button>
+          </form>
+          <form method="POST" action="{{ url_for('toggle_usuario', uid=u.id) }}">
+            <button class="btn btn-sm {{ 'btn-danger' if u.ativo else 'btn-success' }}">
+              {{ 'Desativar' if u.ativo else 'Ativar' }}
+            </button>
+          </form>
+          {% else %}
+          <span class="text-muted" style="font-size:12px">Você</span>
+          {% endif %}
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

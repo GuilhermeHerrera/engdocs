@@ -1,0 +1,21 @@
+{% extends "_auth_base.html" %}
+{% block title %}Recuperar senha — EngDocs{% endblock %}
+{% block body %}
+<div class="wrap" style="max-width:380px">
+  <div class="logo">Eng<span>Docs</span></div>
+  <p class="sub">Recuperar senha</p>
+  {% for cat,msg in get_flashed_messages(with_categories=true) %}
+  <div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  <div class="card">
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:1rem">
+      Informe seu e-mail e enviaremos um link para redefinir sua senha.
+    </p>
+    <form method="POST">
+      <div class="form-group"><label>E-mail</label>
+        <input type="email" name="email" required autofocus placeholder="seu@email.com"></div>
+      <button type="submit" class="btn">Enviar link</button>
+    </form>
+    <div class="link-back"><a href="{{ url_for('login') }}">← Voltar ao login</a></div>
+  </div>
+</div>
+{% endblock %}

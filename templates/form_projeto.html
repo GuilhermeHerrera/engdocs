@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if projeto else 'Novo' }} Projeto — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="breadcrumb">
+    <a href="{{ url_for('listar_projetos') }}">Projetos</a>
+    <span>/</span>
+    <span>{{ 'Editar' if projeto else 'Novo projeto' }}</span>
+  </div>
+  <h1>{{ 'Editar projeto' if projeto else 'Novo projeto' }}</h1>
+</div>
+<div class="card" style="max-width:560px">
+  <form method="POST">
+    <div class="form-group"><label>Nome do projeto *</label>
+      <input type="text" name="nome" required value="{{ projeto.nome if projeto else '' }}"
+             placeholder="Ex: Residência Silva — Reforma"></div>
+    <div class="form-group"><label>Descrição</label>
+      <textarea name="descricao" placeholder="Detalhes sobre o projeto…">{{ projeto.descricao if projeto else '' }}</textarea></div>
+    {% if projeto %}
+    <div class="form-group"><label>Status</label>
+      <select name="status">
+        {% for s in ['ativo','pausado','concluido','cancelado'] %}
+        <option value="{{ s }}" {{ 'selected' if projeto.status==s }}>{{ s.capitalize() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="actions" style="margin-top:1.25rem">
+      <button type="submit" class="btn btn-primary">{{ 'Salvar' if projeto else 'Criar projeto' }}</button>
+      <a href="{{ url_for('listar_projetos') }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

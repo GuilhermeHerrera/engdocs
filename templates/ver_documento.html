@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ doc.nome }} — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="breadcrumb">
+    <a href="{{ url_for('listar_projetos') }}">Projetos</a><span>/</span>
+    <a href="{{ url_for('ver_projeto', projeto_id=doc.projeto_id) }}">{{ doc.projeto_nome }}</a><span>/</span>
+    <span>{{ doc.nome }}</span>
+  </div>
+  <div class="ph-row">
+    <div>
+      <h1>{{ doc.nome }}</h1>
+      <p>
+        {{ doc.tipo_nome }} &nbsp;·&nbsp;
+        <span class="badge badge-{{ doc.status }}">{{ doc.status.replace('_',' ') }}</span>
+        &nbsp;·&nbsp; {{ doc.criado_por_nome }} &nbsp;·&nbsp; {{ doc.criado_em.strftime('%d/%m/%Y') }}
+      </p>
+      {% if doc.descricao %}<p style="margin-top:.4rem;color:var(--text-dim)">{{ doc.descricao }}</p>{% endif %}
+    </div>
+    <div class="actions">
+      {% if session.tipo in ['admin','engenheiro'] %}
+      <a href="{{ url_for('editar_documento', doc_id=doc.id) }}" class="btn btn-ghost">Editar</a>
+      {% endif %}
+      {% if session.tipo == 'admin' %}
+      <form method="POST" action="{{ url_for('excluir_documento', doc_id=doc.id) }}"
+            onsubmit="return confirm('Excluir este documento e todas as versões?')">
+        <button class="btn btn-danger btn-sm">Excluir</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start">
+
+  <!-- Versões -->
+  <div>
+    <h2 style="font-size:15px;font-weight:600;margin-bottom:.75rem">Histórico de versões</h2>
+    {% if versoes %}
+    {% for v in versoes %}
+    <div class="version-item">
+      <div class="version-num">v{{ v.numero }}</div>
+      <div class="version-info">
+        <div class="version-name">{{ v.nome_original }}</div>
+        <div class="version-meta">
+          {{ v.enviado_por_nome }} · {{ v.enviado_em.strftime('%d/%m/%Y %H:%M') }}
+          {% if v.tamanho_bytes %} · {{ humanize_bytes(v.tamanho_bytes) }}{% endif %}
+          {% if v.notas %}<br><span style="font-style:italic">{{ v.notas }}</span>{% endif %}
+        </div>
+      </div>
+      <a href="{{ url_for('download', filename=v.arquivo) }}" class="btn btn-ghost btn-sm">↓ Baixar</a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card"><div class="empty" style="padding:1.5rem"><div class="ei">📎</div><p>Nenhum arquivo enviado.</p></div></div>
+    {% endif %}
+
+    {% if session.tipo in ['admin','engenheiro'] %}
+    <div class="card" style="margin-top:1rem">
+      <h3 style="font-size:13px;font-weight:600;margin-bottom:.75rem">Enviar nova versão</h3>
+      <form method="POST" action="{{ url_for('nova_versao', doc_id=doc.id) }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Arquivo *</label>
+          <input type="file" name="arquivo" required accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.docx,.xlsx,.zip,.rvt,.ifc">
+        </div>
+        <div class="form-group">
+          <label>Notas desta versão</label>
+          <input type="text" name="notas" placeholder="O que mudou nesta versão?">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Enviar versão</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Painel lateral -->
+  <div style="display:flex;flex-direction:column;gap:1rem">
+    <!-- Status -->
+    {% if session.tipo in ['admin','engenheiro'] %}
+    <div class="card">
+      <h3 style="font-size:13px;font-weight:600;margin-bottom:.75rem">Alterar status</h3>
+      <form method="POST" action="{{ url_for('atualizar_status', doc_id=doc.id) }}">
+        <div class="form-group">
+          <select name="status">
+            {% for s in ['rascunho','em_revisao','aprovado','reprovado','arquivado'] %}
+            <option value="{{ s }}" {{ 'selected' if doc.status==s }}>{{ s.replace('_',' ').capitalize() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-ghost btn-sm" style="width:100%">Atualizar</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <!-- Info -->
+    <div class="card">
+      <h3 style="font-size:13px;font-weight:600;margin-bottom:.85rem">Informações</h3>
+      <div style="display:flex;flex-direction:column;gap:.6rem;font-size:13px">
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-dim">Projeto</span>
+          <a href="{{ url_for('ver_projeto', projeto_id=doc.projeto_id) }}"
+             style="color:var(--accent);text-decoration:none;text-align:right;max-width:180px">{{ doc.projeto_nome }}</a>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-dim">Tipo</span><span>{{ doc.tipo_nome }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-dim">Versões</span>
+          <span class="mono" style="color:var(--accent)">{{ versoes|length }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-dim">Criado em</span><span>{{ doc.criado_em.strftime('%d/%m/%Y') }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-dim">Atualizado</span><span>{{ doc.atualizado_em.strftime('%d/%m/%Y') }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

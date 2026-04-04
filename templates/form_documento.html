@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if documento else 'Novo' }} Documento — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="breadcrumb">
+    <a href="{{ url_for('listar_projetos') }}">Projetos</a><span>/</span>
+    <a href="{{ url_for('ver_projeto', projeto_id=projeto_id) }}">Projeto</a><span>/</span>
+    <span>{{ 'Editar documento' if documento else 'Novo documento' }}</span>
+  </div>
+  <h1>{{ 'Editar documento' if documento else 'Novo documento' }}</h1>
+</div>
+<div class="card" style="max-width:600px">
+  <form method="POST" enctype="multipart/form-data">
+    <div class="form-group"><label>Nome do documento *</label>
+      <input type="text" name="nome" required value="{{ documento.nome if documento else '' }}"
+             placeholder="Ex: Planta Baixa Pavimento Térreo Rev.00"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo *</label>
+        <select name="tipo_id" required>
+          {% for t in tipos %}
+          <option value="{{ t.id }}" {{ 'selected' if documento and documento.tipo_id==t.id }}>{{ t.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group"><label>Projeto *</label>
+        <select name="projeto_id" required>
+          {% for p in projetos %}
+          <option value="{{ p.id }}" {{ 'selected' if p.id==projeto_id|int or (documento and documento.projeto_id==p.id) }}>{{ p.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    {% if documento %}
+    <div class="form-group"><label>Status</label>
+      <select name="status">
+        {% for s in ['rascunho','em_revisao','aprovado','reprovado','arquivado'] %}
+        <option value="{{ s }}" {{ 'selected' if documento.status==s }}>{{ s.replace('_',' ').capitalize() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="form-group"><label>Descrição</label>
+      <textarea name="descricao" placeholder="Informações adicionais…">{{ documento.descricao if documento else '' }}</textarea></div>
+    {% if not documento %}
+    <div class="form-group"><label>Arquivo (PDF, DWG, imagem…)</label>
+      <input type="file" name="arquivo" accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg,.docx,.xlsx,.zip,.rvt,.ifc">
+      <p class="form-hint">Formatos aceitos: PDF, DWG, DXF, RVT, IFC, PNG, JPG, DOCX, XLSX, ZIP · Máx. 50MB</p>
+    </div>
+    <div class="form-group"><label>Notas desta versão</label>
+      <input type="text" name="notas_versao" placeholder="Ex: Versão inicial para análise do cliente"></div>
+    {% endif %}
+    <div class="actions" style="margin-top:1.25rem">
+      <button type="submit" class="btn btn-primary">{{ 'Salvar' if documento else 'Criar documento' }}</button>
+      <a href="{{ url_for('ver_projeto', projeto_id=projeto_id) }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

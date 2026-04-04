@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Erro {{ codigo }} — EngDocs{% endblock %}
+{% block content %}
+<div style="text-align:center;padding:5rem 1rem">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:5rem;font-weight:700;
+              color:var(--border);line-height:1">{{ codigo }}</div>
+  <p style="font-size:1.1rem;margin:1rem 0 .5rem">{{ msg }}</p>
+  <p class="text-dim" style="font-size:13px;margin-bottom:1.5rem">
+    {% if codigo==403 %}Você não tem permissão para acessar esta página.
+    {% else %}A página que você procura não existe ou foi removida.{% endif %}
+  </p>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-primary">← Voltar ao início</a>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ projeto.nome }} — EngDocs{% endblock %}
+{% block content %}
+<div class="ph">
+  <div class="breadcrumb">
+    <a href="{{ url_for('listar_projetos') }}">Projetos</a>
+    <span>/</span><span>{{ projeto.nome }}</span>
+  </div>
+  <div class="ph-row">
+    <div>
+      <h1>{{ projeto.nome }}</h1>
+      <p>
+        <span class="badge badge-{{ projeto.status }}">{{ projeto.status }}</span>
+        &nbsp;· Criado por {{ projeto.criado_por_nome }}
+        &nbsp;· {{ projeto.criado_em.strftime('%d/%m/%Y') }}
+      </p>
+      {% if projeto.descricao %}<p style="margin-top:.4rem;max-width:600px">{{ projeto.descricao }}</p>{% endif %}
+    </div>
+    <div class="actions">
+      {% if session.tipo in ['admin','engenheiro'] %}
+      <a href="{{ url_for('novo_documento', projeto_id=projeto.id) }}" class="btn btn-primary">+ Novo documento</a>
+      <a href="{{ url_for('editar_projeto', pid=projeto.id) }}" class="btn btn-ghost">Editar</a>
+      {% endif %}
+      {% if session.tipo == 'admin' %}
+      <form method="POST" action="{{ url_for('excluir_projeto', pid=projeto.id) }}"
+            onsubmit="return confirm('Excluir projeto e todos os documentos?')">
+        <button class="btn btn-danger btn-sm">Excluir</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Filtros -->
+<form method="GET" class="search-bar">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nome…">
+  <select name="tipo" onchange="this.form.submit()">
+    <option value="">Todos os tipos</option>
+    {% for t in tipos %}
+    <option value="{{ t.id }}" {{ 'selected' if tipo==t.id|string }}>{{ t.nome }}</option>
+    {% endfor %}
+  </select>
+  <select name="status" onchange="this.form.submit()">
+    <option value="">Todos os status</option>
+    {% for s in ['rascunho','em_revisao','aprovado','reprovado','arquivado'] %}
+    <option value="{{ s }}" {{ 'selected' if st==s }}>{{ s.replace('_',' ').capitalize() }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-ghost">Buscar</button>
+  {% if q or tipo or st %}<a href="{{ url_for('ver_projeto', projeto_id=projeto.id) }}" class="btn btn-ghost">Limpar</a>{% endif %}
+</form>
+
+{% if documentos %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Nome</th><th>Tipo</th><th>Status</th><th>Versão</th><th>Atualizado</th><th>Criado por</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for d in documentos %}
+    <tr>
+      <td>
+        <a href="{{ url_for('ver_documento', doc_id=d.id) }}" style="color:var(--text);text-decoration:none;font-weight:500">{{ d.nome }}</a>
+        {% if d.descricao %}<div style="font-size:12px;color:var(--text-dim)">{{ d.descricao[:55] }}{% if d.descricao|length>55 %}…{% endif %}</div>{% endif %}
+      </td>
+      <td class="text-dim" style="font-size:12px;white-space:nowrap">{{ d.tipo_nome }}</td>
+      <td><span class="badge badge-{{ d.status }}">{{ d.status.replace('_',' ') }}</span></td>
+      <td class="td-mono" style="color:var(--accent)">v{{ d.total_versoes }}</td>
+      <td class="text-dim" style="font-size:12px">{{ d.ultima_versao.strftime('%d/%m/%Y') if d.ultima_versao else '—' }}</td>
+      <td class="text-dim" style="font-size:12px">{{ d.criado_por_nome }}</td>
+      <td>
+        <div class="actions">
+          <a href="{{ url_for('ver_documento', doc_id=d.id) }}" class="btn btn-ghost btn-sm">Ver</a>
+          {% if session.tipo in ['admin','engenheiro'] %}
+          <a href="{{ url_for('editar_documento', doc_id=d.id) }}" class="btn btn-ghost btn-sm">Editar</a>
+          {% endif %}
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="ei">📄</div>
+  <p>Nenhum documento encontrado.</p>
+  {% if session.tipo in ['admin','engenheiro'] %}
+  <a href="{{ url_for('novo_documento', projeto_id=projeto.id) }}" class="btn btn-primary" style="margin-top:.75rem">Adicionar documento</a>
+  {% endif %}
+</div></div>
+{% endif %}
+{% endblock %}
