@@ -577,10 +577,12 @@ def err404(e): return render_template('erro.html', codigo=404, msg='Página não
 
 import os
 
+import os
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
 
 @app.route("/")
 def home():
     return "App funcionando 🚀"
+
