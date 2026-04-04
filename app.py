@@ -575,14 +575,12 @@ def err403(e): return render_template('erro.html', codigo=403, msg='Acesso negad
 @app.errorhandler(404)
 def err404(e): return render_template('erro.html', codigo=404, msg='Página não encontrada.'), 404
 
-import os
-
-import os
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
 
 @app.route("/")
 def home():
     return "App funcionando 🚀"
+import os
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
 
