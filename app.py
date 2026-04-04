@@ -27,12 +27,16 @@ EMAIL_FROM    = 'EngDocs <seuemail@gmail.com>'
 APP_URL       = 'http://localhost:5000' # altere em produção
 
 # ── DB ─────────────────────────────────────────────────────────────────────────
+import os
+import mysql.connector
+
 def get_db():
     return mysql.connector.connect(
-        host='localhost',
-        user='enguser',
-        password='123456',
-        database='engdocs'
+        host=os.getenv("MYSQLHOST"),
+        port=int(os.getenv("MYSQLPORT", 3306)),
+        user=os.getenv("MYSQLUSER"),
+        password=os.getenv("MYSQLPASSWORD"),
+        database=os.getenv("MYSQLDATABASE")
     )
 
 def log(acao, entidade=None, entidade_id=None, detalhe=None):
