@@ -122,28 +122,42 @@ def login():
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
+    if 'usuario_id' not in session:
+        flash('Faça login para acessar esta página.', 'erro')
+        return redirect(url_for('login'))
+
+    if session.get('tipo') != 'admin':
+        flash('Acesso negado.', 'erro')
+        return redirect(url_for('dashboard'))
+
     if request.method == 'POST':
         nome  = request.form['nome'].strip()
         email = request.form['email'].strip().lower()
         senha = request.form['senha']
         tipo  = request.form.get('tipo', 'visualizador')
-        if len(senha) < 6:
-            flash('Senha deve ter pelo menos 6 caracteres.', 'erro')
+
+        if not nome or not email or not senha:
+            flash('Preencha todos os campos.', 'erro')
             return render_template('cadastro.html')
-        db = get_db(); cur = db.cursor()
+
+        db = get_db(); cur = db.cursor(dictionary=True)
         try:
-            cur.execute(
-                'INSERT INTO usuarios (nome, email, senha_hash, tipo) VALUES (%s,%s,%s,%s)',
-                (nome, email, generate_password_hash(senha), tipo)
-            )
-            db.commit()
-            log('cadastro', 'usuario')
-            flash('Conta criada! Faça login.', 'sucesso')
-            return redirect(url_for('login'))
-        except mysql.connector.IntegrityError:
-            flash('Este e-mail já está cadastrado.', 'erro')
+            cur.execute('SELECT id FROM usuarios WHERE email=%s', (email,))
+            if cur.fetchone():
+                flash('E-mail já cadastrado.', 'erro')
+            else:
+                cur.execute(
+                    'INSERT INTO usuarios (nome, email, senha_hash, tipo) VALUES (%s,%s,%s,%s)',
+                    (nome, email, generate_password_hash(senha), tipo)
+                )
+                db.commit()
+                log('cadastro', 'usuario')
+                flash('Usuário criado com sucesso.', 'sucesso')
+                return redirect(url_for('dashboard'))
         finally:
+            cur.close()
             db.close()
+
     return render_template('cadastro.html')
 
 @app.route('/logout')
