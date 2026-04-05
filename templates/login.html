@@ -52,8 +52,14 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,129,247,.1)}
       <button type="submit" class="btn">Entrar</button>
     </form>
     <div class="links">
-      <p class="sub">Solicite seu acesso ao administrador do sistema.</p>
-      <a href="{{ url_for('recuperar_senha') }}">Esqueci a senha</a>
+<div style="text-align:center; margin-top:15px;">
+  <a href="{{ url_for('recuperar_senha') }}" style="display:inline-block; margin-bottom:5px;">
+    Esqueci a senha
+  </a>
+  <p class="sub" style="margin-top:10px;">
+    Solicite seu acesso ao administrador do sistema.
+  </p>
+</div>
     </div>
   </div>
 </div>
