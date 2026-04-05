@@ -39,7 +39,15 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,129,247,.1)}
 </head>
 <body>
 <div class="wrap">
-  <div class="logo">Eng<span>Docs</span></div>
+<div class="logo" style="text-align:center; margin-bottom:20px;">
+  <img src="{{ url_for('static', filename='logo.png') }}" 
+       alt="EngDocsPro" 
+       style="max-width:160px;">
+
+  <p style="margin-top:10px; font-size:14px; color:#aaa;">
+    Sistema de gestão de documentos de engenharia
+  </p>
+</div>
   <p class="sub">Sistema de gestão de documentos de engenharia</p>
   {% for cat,msg in get_flashed_messages(with_categories=true) %}
   <div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
