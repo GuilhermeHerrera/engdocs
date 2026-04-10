@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1.5rem;align-items:start"></div>
   <div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
       <h2 style="font-size:15px;font-weight:600">Projetos recentes</h2>
@@ -46,8 +46,10 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="card"><div class="empty"><div class="ei">📁</div><p>Nenhum projeto ainda.</p>
-      {% if session.tipo != 'visualizador' %}
+<div class="card" style="min-height:270px;display:flex;align-items:center;justify-content:center;">
+  <div class="empty">
+    <div class="ei" style="font-size:3rem;margin-bottom:1rem;">📁</div>
+    <p style="font-size:15px;margin-bottom:.9rem;">Nenhum projeto ainda.</p>      {% if session.tipo != 'visualizador' %}
       <a href="{{ url_for('novo_projeto') }}" class="btn btn-primary" style="margin-top:.75rem">Criar projeto</a>
       {% endif %}
     </div></div>
