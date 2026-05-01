@@ -89,7 +89,7 @@ def send_email(to, subject, body_html):
         msg['Subject'] = subject
         msg['From'] = EMAIL_FROM
         msg['To'] = to
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as s:
             s.ehlo(); s.starttls(); s.login(SMTP_USER, SMTP_PASSWORD)
             s.sendmail(SMTP_USER, to, msg.as_string())
         return True
@@ -589,10 +589,6 @@ def err403(e): return render_template('erro.html', codigo=403, msg='Acesso negad
 @app.errorhandler(404)
 def err404(e): return render_template('erro.html', codigo=404, msg='Página não encontrada.'), 404
 
-
-@app.route("/")
-def home():
-    return "App funcionando 🚀"
 import os
 
 if __name__ == "__main__":
