@@ -19,12 +19,12 @@ MAX_FILE_MB = 50
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── SMTP — edite aqui ──────────────────────────────────────────────────────────
-SMTP_HOST     = 'smtp.gmail.com'
-SMTP_PORT     = 587
-SMTP_USER     = 'seuemail@gmail.com'   # altere
-SMTP_PASSWORD = 'sua_senha_de_app'     # altere (use senha de app do Gmail)
-EMAIL_FROM    = 'EngDocs <seuemail@gmail.com>'
-APP_URL       = 'http://localhost:5000' # altere em produção
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+SMTP_USER = os.getenv("SMTP_USER")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+EMAIL_FROM = os.getenv("EMAIL_FROM", f"EngDocs <{SMTP_USER}>")
+APP_URL = os.getenv("APP_URL", "http://localhost:5000")
 
 # ── DB ─────────────────────────────────────────────────────────────────────────
 import os
