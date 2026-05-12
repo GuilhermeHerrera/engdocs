@@ -1,6 +1,20 @@
 # EngDocs — Sistema de Gestão de Documentos de Engenharia
 
-Sistema web profissional em **Python (Flask) + MySQL** para gerenciar documentos técnicos de engenharia.
+# EngDocs
+
+Sistema web para gerenciamento e versionamento de documentos de engenharia, desenvolvido com Flask e MySQL.
+
+O projeto possui autenticação de usuários, controle de permissões por perfil, upload e versionamento de arquivos, dashboard administrativo e histórico completo de atividades.
+
+## Tecnologias Utilizadas
+
+- Python
+- Flask
+- MySQL
+- HTML/CSS
+- Jinja2
+- Git & GitHub
+- Railway
 
 ---
 
