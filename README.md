@@ -91,7 +91,7 @@ APP_URL       = 'http://localhost:5001'
 python app.py
 ```
 
-Acesse: **http://localhost:5001**
+Acesse: **https://engdocs-production.up.railway.app/login?next=/dashboard**
 
 ---
 
