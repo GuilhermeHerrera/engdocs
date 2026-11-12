@@ -37,11 +37,12 @@ def get_db():
 
         return mysql.connector.connect(
             host=parsed.hostname,
-            port=parsed.port or 3306,
+            port=parsed.port or 17101,
             user=unquote(parsed.username or ""),
             password=unquote(parsed.password or ""),
-            database=unquote(parsed.path.lstrip("/"))
+            database=parsed.path.lstrip("/")
         )
+
 
     return mysql.connector.connect(
         host=os.getenv("junction.proxy.rlwy.net"),
