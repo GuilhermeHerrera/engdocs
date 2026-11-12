@@ -31,6 +31,19 @@ APP_URL = os.getenv("APP_URL", "http://localhost:5000")
 # ── DB ─────────────────────────────────────────────────────────────────────────
 
 def get_db():
+    database_url = os.getenv("MYSQL_URL")
+
+    if database_url:
+        parsed = urlparse(database_url)
+
+        return mysql.connector.connect(
+            host=parsed.hostname,
+            port=parsed.port or 3306,
+            user=unquote(parsed.username or ""),
+            password=unquote(parsed.password or ""),
+            database=unquote(parsed.path.lstrip("/"))
+        )
+
     return mysql.connector.connect(
         host=os.getenv("MYSQLHOST"),
         port=int(os.getenv("MYSQLPORT", 3306)),
