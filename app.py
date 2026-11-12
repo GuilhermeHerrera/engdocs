@@ -44,11 +44,11 @@ def get_db():
         )
 
     return mysql.connector.connect(
-        host=os.getenv("MYSQLHOST"),
-        port=int(os.getenv("MYSQLPORT", 3306)),
-        user=os.getenv("MYSQLUSER"),
-        password=os.getenv("MYSQLPASSWORD"),
-        database=os.getenv("MYSQLDATABASE")
+        host=os.getenv("junction.proxy.rlwy.net"),
+        port=int(os.getenv("17101",)),
+        user=os.getenv("root"),
+        password=os.getenv("kiNtSmlmbBrmaepGUqbKcywCpaMnadAH"),
+        database=os.getenv("railway")
     )
 
 
