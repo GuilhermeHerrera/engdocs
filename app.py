@@ -53,8 +53,6 @@ def get_db():
         database=os.getenv("MYSQLDATABASE")
     )
 
-    )
-
 def log(acao, entidade=None, entidade_id=None, detalhe=None):
     try:
         db = get_db(); cur = db.cursor()
